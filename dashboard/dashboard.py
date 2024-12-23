@@ -11,16 +11,27 @@ class TutorialTab(QWidget):
         layout = QVBoxLayout()
         self.setLayout(layout)
 
-        # Tutorial text
+        # Landing page text
         self.text_box = QTextEdit()
         self.text_box.setReadOnly(True)
         self.text_box.setHtml(
-            """<p>Welcome to the tutorial!</p>
-            <p>Follow these steps to get started:</p>
+            """<h1>Automate MS</h1>
+            <h2>Introduction</h2>
+            <p>A little tool to automate repetitive/boring tasks in MapleStory to enhance your gameplay experience.</p>
+            <h3>Disclaimer</h3>
             <ol>
-                <li>Learn about the Computer Vision tab.</li>
-                <li>Understand the Key Automation tab.</li>
-            </ol>"""
+                <li>This software is <b>NOT</b> a substitute for playing the game. It is a tool to assist you in your gameplay.</li>
+                <li>Use this software at your <b>OWN RISK</b>. </li>
+                <li>The developers are <b>NOT</b> responsible for any bans or penalties incurred while using this software.</li>
+            </ol>
+            <h3>Features</h3>
+            <ol>
+                <li>Auto dialogue key pressing.</li>
+                <li>Auto Miracle cubing.</li>
+                <li>...More to come!<li>
+            </ol>
+            
+            """
         )
         layout.addWidget(self.text_box)
 
