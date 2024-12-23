@@ -1,39 +1,126 @@
-import tkinter as tk
-from tkinter import ttk
+from PySide6.QtWidgets import (QApplication, QMainWindow, QTabWidget, QVBoxLayout, QHBoxLayout, QWidget, QLabel, QPushButton, QCheckBox, QTextEdit)
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QDesktopServices
+from PySide6.QtCore import QUrl
 
-def create_tab(notebook, title, content):
-    """Helper function to create a new tab with given title and content."""
-    frame = ttk.Frame(notebook)
-    notebook.add(frame, text=title)
-    
-    # Example content for the tab
-    label = tk.Label(frame, text=content, font=("Arial", 14))
-    label.pack(pady=20, padx=20)
+class TutorialTab(QWidget):
+    def __init__(self, main_window):
+        super().__init__()
+        self.main_window = main_window
 
-# Create the main application window
-root = tk.Tk()
-root.title("Tkinter Tabbed GUI Example")
-root.geometry("800x600")
+        layout = QVBoxLayout()
+        self.setLayout(layout)
 
-# Create a Notebook widget for the tabs
-notebook = ttk.Notebook(root)
-notebook.pack(fill='both', expand=True)
+        # Tutorial text
+        self.text_box = QTextEdit()
+        self.text_box.setReadOnly(True)
+        self.text_box.setHtml(
+            """<p>Welcome to the tutorial!</p>
+            <p>Follow these steps to get started:</p>
+            <ol>
+                <li>Learn about the Computer Vision tab.</li>
+                <li>Understand the Key Automation tab.</li>
+            </ol>"""
+        )
+        layout.addWidget(self.text_box)
 
-# Add tabs to the notebook
-create_tab(notebook, "Tab 1", "Welcome to Tab 1")
-create_tab(notebook, "Tab 2", "Welcome to Tab 2")
-create_tab(notebook, "Tab 3", "Welcome to Tab 3")
+        # Add button to open YouTube video
+        self.video_button = QPushButton("Click here to watch video tutorial")
+        self.video_button.clicked.connect(self.open_video_tutorial)
+        layout.addWidget(self.video_button, alignment=Qt.AlignCenter)
 
-# Add a button to add a new tab dynamically
-def add_new_tab():
-    tab_number = len(notebook.tabs()) + 1
-    create_tab(notebook, f"Tab {tab_number}", f"Welcome to Tab {tab_number}")
+        # Checkbox for tutorial acknowledgment
+        self.check_box = QCheckBox("I have read the tutorial")
+        self.check_box.stateChanged.connect(self.enable_tabs)
+        layout.addWidget(self.check_box, alignment=Qt.AlignCenter)
 
-button_frame = ttk.Frame(root)
-button_frame.pack(fill="x", pady=5)
+    def open_video_tutorial(self):
+        youtube_url = QUrl("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+        QDesktopServices.openUrl(youtube_url)
 
-add_tab_button = ttk.Button(button_frame, text="Add New Tab", command=add_new_tab)
-add_tab_button.pack(pady=5)
+    def enable_tabs(self, state):
+        state = int(state)  # Explicitly cast state to integer
+        print(f"Checkbox state changed: {state}")  # Debugging statement
+        if state == 2:  # Explicitly checking for Qt.Checked (2)
+            print("Checkbox is checked. Enabling tabs...")
+            self.main_window.enable_tabs()
+        elif state == 0:  # Explicitly checking for Qt.Unchecked (0)
+            print("Checkbox is unchecked. Disabling tabs...")
+            self.main_window.disable_tabs()
+        else:
+            print(f"Unhandled state: {state}")
+
+
+class Tab1(QWidget):
+    def __init__(self):
+        super().__init__()
+        layout = QVBoxLayout()
+        self.label = QLabel("Auto: Button Press")
+        self.label.setAlignment(Qt.AlignCenter)
+        layout.addWidget(self.label)
+
+        self.external_btn = QPushButton("Open CV Script")
+        self.external_btn.clicked.connect(self.open_cv_script)
+        layout.addWidget(self.external_btn)
+
+        self.setLayout(layout)
+
+    def open_cv_script(self):
+        self.label.setText("Call to CV script placeholder")
+
+class Tab2(QWidget):
+    def __init__(self):
+        super().__init__()
+        layout = QVBoxLayout()
+        self.label = QLabel("Auto: Miracle Cube")
+        self.label.setAlignment(Qt.AlignCenter)
+        layout.addWidget(self.label)
+
+        self.external_btn = QPushButton("Open Keypress Script")
+        self.external_btn.clicked.connect(self.open_keypress_script)
+        layout.addWidget(self.external_btn)
+
+        self.setLayout(layout)
+
+    def open_keypress_script(self):
+        self.label.setText("Call to Keypress script placeholder")
+
+class MainWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Automation Software GUI")
+        self.setGeometry(100, 100, 800, 600)
+
+        # Tab Widget
+        self.tabs = QTabWidget()
+        self.setCentralWidget(self.tabs)
+
+        # Add Tutorial tab
+        tutorial_tab = TutorialTab(self)
+        self.tabs.addTab(tutorial_tab, "Introduction")
+
+        # Add other tabs
+        self.tab1 = Tab1()
+        self.tab2 = Tab2()
+        self.tabs.addTab(self.tab1, "Button Press")
+        self.tabs.addTab(self.tab2, "Miracle Cube")
+
+        # Disable other tabs initially
+        self.disable_tabs()
+
+    def enable_tabs(self):
+        print("Enabling tabs...")  # Debugging statement
+        self.tabs.setTabEnabled(1, True)
+        self.tabs.setTabEnabled(2, True)
+
+    def disable_tabs(self):
+        print("Disabling tabs...")  # Debugging statement
+        self.tabs.setTabEnabled(1, False)
+        self.tabs.setTabEnabled(2, False)
 
 # Run the application
-root.mainloop()
+if __name__ == "__main__":
+    app = QApplication([])
+    window = MainWindow()
+    window.show()
+    app.exec()
