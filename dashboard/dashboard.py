@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import (QApplication, QMainWindow, QTabWidget, QVBoxLayout, QHBoxLayout, QWidget, QLabel, QPushButton, QCheckBox, QTextEdit)
+from PySide6.QtWidgets import (QApplication, QMainWindow, QTabWidget, QVBoxLayout, QHBoxLayout, QWidget, QLabel, QPushButton, QCheckBox, QTextEdit, QSpinBox, QLineEdit)
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QDesktopServices
 from PySide6.QtCore import QUrl
@@ -61,23 +61,90 @@ class TutorialTab(QWidget):
         else:
             print(f"Unhandled state: {state}")
 
-
 class Tab1(QWidget):
     def __init__(self):
         super().__init__()
+        
+        # Set up the layout
         layout = QVBoxLayout()
+        
+        # Label
         self.label = QLabel("Auto: Button Press")
         self.label.setAlignment(Qt.AlignCenter)
         layout.addWidget(self.label)
 
-        self.external_btn = QPushButton("Open CV Script")
+        # Horizontal layout for NPC interact button and its label
+        interact_layout = QHBoxLayout()
+        interact_label = QLabel("NPC Interact Button:")
+        interact_layout.addWidget(interact_label)
+
+        # LineEdit for NPC Interact
+        self.character_input = QLineEdit()
+        self.character_input.setMaxLength(1)
+        self.character_input.setPlaceholderText("J")
+        self.character_input.setFixedWidth(50)  # Align closely with label
+        self.character_input.setAlignment(Qt.AlignCenter)
+        interact_layout.addWidget(self.character_input)
+
+        layout.addLayout(interact_layout)   
+
+        # Horizontal layout for delay field and its label
+        delay_layout = QHBoxLayout()
+        delay_label = QLabel("Button Press Delay:")
+        delay_layout.addWidget(delay_label)
+
+        # SpinBox for Button Click Delay
+        self.delay_spinbox = QSpinBox()
+        self.delay_spinbox.setRange(0, 10000)  # Set range in milliseconds
+        self.delay_spinbox.setValue(10)  # Default value
+        self.delay_spinbox.setSuffix(" ms")
+        self.delay_spinbox.setFixedWidth(80)  # Align closely with label
+        delay_layout.addWidget(self.delay_spinbox)
+
+        layout.addLayout(delay_layout)
+
+        # Checkbox for "Hold Down Button"
+        self.hold_down_checkbox = QCheckBox("Hold Down Button")
+        self.hold_down_checkbox.stateChanged.connect(self.toggle_hold_down)
+        layout.addWidget(self.hold_down_checkbox)
+
+        # Button to start auto button press
+        self.external_btn = QPushButton("Start Auto Button Press")
         self.external_btn.clicked.connect(self.open_cv_script)
         layout.addWidget(self.external_btn)
 
+        # Button for NPC Interact
+        self.npc_interact_btn = QPushButton("NPC Interact")
+        self.npc_interact_btn.clicked.connect(self.npc_interact)
+        layout.addWidget(self.npc_interact_btn)
+
+        # Set the layout for the widget
         self.setLayout(layout)
 
+        # Set fixed width for the window when Tab1 is selected
+        self.setFixedWidth(300)
+
     def open_cv_script(self):
-        self.label.setText("Call to CV script placeholder")
+        # Placeholder function for the CV script
+        if self.hold_down_checkbox.isChecked():
+            self.label.setText("CV script called: Hold Down Enabled")
+        else:
+            delay = self.delay_spinbox.value()
+            character = self.character_input.text() or "None"
+            self.label.setText(f"CV script called: Delay {delay} ms, Character: {character}")
+
+    def toggle_hold_down(self):
+        # Placeholder function for checkbox state changes
+        if self.hold_down_checkbox.isChecked():
+            self.label.setText("Hold Down Button Enabled")
+            self.delay_spinbox.setEnabled(False)
+        else:
+            self.label.setText("Hold Down Button Disabled")
+            self.delay_spinbox.setEnabled(True)
+
+    def npc_interact(self):
+        # Placeholder function for NPC interact button
+        self.label.setText("NPC Interact Button Pressed")
 
 class Tab2(QWidget):
     def __init__(self):
@@ -104,6 +171,7 @@ class MainWindow(QMainWindow):
 
         # Tab Widget
         self.tabs = QTabWidget()
+        self.tabs.currentChanged.connect(self.adjust_window_size)
         self.setCentralWidget(self.tabs)
 
         # Add Tutorial tab
@@ -128,6 +196,12 @@ class MainWindow(QMainWindow):
         print("Disabling tabs...")  # Debugging statement
         self.tabs.setTabEnabled(1, False)
         self.tabs.setTabEnabled(2, False)
+    def adjust_window_size(self, index):
+        if index == 1:  # Tab1 selected
+            self.setFixedWidth(300)
+            self.setFixedHeight(300)
+        else:
+            self.setFixedWidth(800)  # Default width    
 
 # Run the application
 if __name__ == "__main__":
