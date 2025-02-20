@@ -78,7 +78,7 @@ def kb_mash():
             random_pauser(1,1.5)
             keyboard_controller.press(Key.left)
             print('move left')
-            random_pauser(1,1.5)
+            random_pauser(1.2,1.4)
             keyboard_controller.release(Key.left)
             print('stop moving left')
             counter = 0 
