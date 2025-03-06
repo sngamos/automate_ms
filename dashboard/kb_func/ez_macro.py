@@ -5,34 +5,47 @@ import math
 # Initialize the keyboard controller
 keyboard_controller = Controller()
 
+# Listener for the 'q' key to exit
+class KeyboardListener:
+    def __init__(self):
+        self.stop_key_pressed = False
 
-def random_pauser(lower_bound=None, upper_bound=None):
+    def on_press(self, key):
+        if key == Key.esc or (hasattr(key, 'char') and key.char == 'q'):
+            self.stop_key_pressed = True
+
+    def check_stop_key(self):
+        return self.stop_key_pressed
+
+def random_pauser(lower_bound=None, upper_bound=None, add_random=False):
     """
-    Pause execution for a random duration.
+    Pause execution for a random duration, checking frequently for a stop signal.
     
-    If no bounds are provided, it behaves like the original:
-      sleep(random.random() * 0.1)
-    
+    If no bounds are provided, it sleeps for a random time between 0 and 10 second.
     Otherwise, it sleeps for a random time between the provided bounds.
+
+    If add_random is True, the sleep time is increased by a random amount by a 0-25% of the bound provided.
     """
     if lower_bound is None and upper_bound is None:
-        time_sleep = random.random()
-        print("sleep time: %s",time_sleep)
-        time.sleep(time_sleep)
-
-
+        total_sleep = random.random()
     else:
-        # Provide defaults if one bound is missing
         if lower_bound is None:
             lower_bound = 0.0
         if upper_bound is None:
-            upper_bound = math.inf
+            upper_bound = 10.0
         if upper_bound < lower_bound:
             raise ValueError("upper_bound must be greater than lower_bound")
-        time_sleep = random.uniform(lower_bound, upper_bound)
-        print("sleep time: %s",time_sleep)  
-        time.sleep(time_sleep)
-
+        total_sleep = random.uniform(lower_bound, upper_bound)
+        if add_random:
+            total_sleep += random.uniform(0, 0.25 * (upper_bound - lower_bound))
+    
+    sleep_increment = 0.01  # Check every 10ms
+    elapsed = 0.0
+    while elapsed < total_sleep:
+        if keyboard_listener.check_stop_key():
+            raise KeyboardInterrupt("Stop key pressed, exiting sleep early.")
+        time.sleep(sleep_increment)
+        elapsed += sleep_increment
 
 
 def kb_mash():
@@ -85,18 +98,6 @@ def kb_mash():
             print('resetting counter')
             counter_limit = random.randint(10,20)
             print('new counter limit: %s', counter_limit)
-
-# Listener for the 'q' key to exit
-class KeyboardListener:
-    def __init__(self):
-        self.stop_key_pressed = False
-
-    def on_press(self, key):
-        if key == Key.esc or (hasattr(key, 'char') and key.char == 'q'):
-            self.stop_key_pressed = True
-
-    def check_stop_key(self):
-        return self.stop_key_pressed
 
 # Initialize and start the keyboard listener
 keyboard_listener = KeyboardListener()

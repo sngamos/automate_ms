@@ -2,7 +2,8 @@ from PySide6.QtWidgets import (QApplication, QMainWindow, QTabWidget, QVBoxLayou
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QDesktopServices
 from PySide6.QtCore import QUrl
-
+import kb_func.key_mash as keymash
+from pynput.keyboard import Listener
 class TutorialTab(QWidget):
     def __init__(self, main_window):
         super().__init__()
@@ -81,7 +82,8 @@ class Tab1(QWidget):
         # LineEdit for NPC Interact
         self.character_input = QLineEdit()
         self.character_input.setMaxLength(1)
-        self.character_input.setPlaceholderText("J")
+        self.character_input.setPlaceholderText("j")
+        self.character_input.setText("j")  # Default value
         self.character_input.setFixedWidth(50)  # Align closely with label
         self.character_input.setAlignment(Qt.AlignCenter)
         interact_layout.addWidget(self.character_input)
@@ -110,13 +112,8 @@ class Tab1(QWidget):
 
         # Button to start auto button press
         self.external_btn = QPushButton("Start Auto Button Press")
-        self.external_btn.clicked.connect(self.open_cv_script)
+        self.external_btn.clicked.connect(self.npc_interact)
         layout.addWidget(self.external_btn)
-
-        # Button for NPC Interact
-        self.npc_interact_btn = QPushButton("NPC Interact")
-        self.npc_interact_btn.clicked.connect(self.npc_interact)
-        layout.addWidget(self.npc_interact_btn)
 
         # Set the layout for the widget
         self.setLayout(layout)
@@ -124,14 +121,6 @@ class Tab1(QWidget):
         # Set fixed width for the window when Tab1 is selected
         self.setFixedWidth(300)
 
-    def open_cv_script(self):
-        # Placeholder function for the CV script
-        if self.hold_down_checkbox.isChecked():
-            self.label.setText("CV script called: Hold Down Enabled")
-        else:
-            delay = self.delay_spinbox.value()
-            character = self.character_input.text() or "None"
-            self.label.setText(f"CV script called: Delay {delay} ms, Character: {character}")
 
     def toggle_hold_down(self):
         # Placeholder function for checkbox state changes
@@ -144,7 +133,20 @@ class Tab1(QWidget):
 
     def npc_interact(self):
         # Placeholder function for NPC interact button
-        self.label.setText("NPC Interact Button Pressed")
+        keyboard_listener = keymash.KeyboardListener()
+        with Listener(on_press=keyboard_listener.on_press) as listener:
+            interact_button = self.character_input.text()
+            hold_down_button = self.hold_down_checkbox.isChecked()
+            button_press_delay = self.delay_spinbox.value() / 1000  # Convert to seconds
+            self.label.setText("NPC Interact Button Pressed")
+            macro_exit_code = keymash.npc_interact(keyboard_listener,interact_button, hold_down_button, button_press_delay)
+            if macro_exit_code == 2:
+                self.label.setText("User Interrupted: NPC Interact Button Released")
+            elif macro_exit_code == 1:
+                self.label.setText("User Interrupted: NPC Interact Button Loop Exited")
+            else:
+                self.label.setText("NPC Interact Button Loop Exited")
+    
 
 class Tab2(QWidget):
     def __init__(self):
