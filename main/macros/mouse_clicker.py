@@ -9,9 +9,9 @@ from utils.rand_pauser import random_pauser
 def cubing_click(kb_listener,mouse_controller, button= Button.left):
     #simulate mouse click
     mouse_controller.press(button)
-    random_pauser(kb_listener,0.1,0.3)
+    random_pauser(kb_listener,0.1,0.2)
     mouse_controller.release(button)
-    random_pauser(kb_listener,0.1,0.3)
+    random_pauser(kb_listener,0.1,0.2)
 
 def blind_cubing_loop(kb_listener,mouse_controller,keyboard_controller):
     print("starting blind cubing loop")
@@ -27,20 +27,20 @@ def blind_cubing_loop(kb_listener,mouse_controller,keyboard_controller):
             print("Stop key pressed, exiting loop.")
             break
         cubing_click(kb_listener,mouse_controller)
-        random_pauser(kb_listener,0.3,0.6)
+        random_pauser(kb_listener,0.2,0.3)
         #1
         keyboard_controller.press(Key.enter)
-        random_pauser(kb_listener,0.3,0.6)
+        random_pauser(kb_listener,0.2,0.3)
         keyboard_controller.release(Key.enter)
-        random_pauser(kb_listener,0.3,0.6)
+        random_pauser(kb_listener,0.2,0.3)
         #2
         keyboard_controller.press(Key.enter)
-        random_pauser(kb_listener,0.3,0.6)
+        random_pauser(kb_listener,0.2,0.3)
         keyboard_controller.release(Key.enter)
-        random_pauser(kb_listener,0.3,0.6)
+        random_pauser(kb_listener,0.2,0.3)
         #3
         keyboard_controller.press(Key.enter)
-        random_pauser(kb_listener,0.3,0.6)
+        random_pauser(kb_listener,0.2,0.3)
         keyboard_controller.release(Key.enter)
         #wait for next
         random_pauser(kb_listener,1.5,1.7)
