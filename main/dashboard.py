@@ -2,8 +2,17 @@ from PySide6.QtWidgets import (QApplication, QMainWindow, QTabWidget, QVBoxLayou
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QDesktopServices
 from PySide6.QtCore import QUrl
-import kb_func.key_mash as keymash
+import macros.kb_mash as kb_mash
+from macros.utils.kbListener import KeyboardListener
 from pynput.keyboard import Listener
+import threading
+# Create a global KeyboardListener instance
+global_keyboard_listener = KeyboardListener()
+# Start the pynput Listener on the main thread
+global_listener = Listener(on_press=global_keyboard_listener.on_press)
+global_listener.start()  # This starts the listener non-blocking on the main thread
+
+
 class TutorialTab(QWidget):
     def __init__(self, main_window):
         super().__init__()
@@ -98,17 +107,13 @@ class Tab1(QWidget):
         # SpinBox for Button Click Delay
         self.delay_spinbox = QSpinBox()
         self.delay_spinbox.setRange(0, 10000)  # Set range in milliseconds
-        self.delay_spinbox.setValue(10)  # Default value
+        self.delay_spinbox.setValue(100)  # Default value
         self.delay_spinbox.setSuffix(" ms")
         self.delay_spinbox.setFixedWidth(80)  # Align closely with label
         delay_layout.addWidget(self.delay_spinbox)
 
         layout.addLayout(delay_layout)
 
-        # Checkbox for "Hold Down Button"
-        self.hold_down_checkbox = QCheckBox("Hold Down Button")
-        self.hold_down_checkbox.stateChanged.connect(self.toggle_hold_down)
-        layout.addWidget(self.hold_down_checkbox)
 
         # Button to start auto button press
         self.external_btn = QPushButton("Start Auto Button Press")
@@ -121,31 +126,27 @@ class Tab1(QWidget):
         # Set fixed width for the window when Tab1 is selected
         self.setFixedWidth(300)
 
-
-    def toggle_hold_down(self):
-        # Placeholder function for checkbox state changes
-        if self.hold_down_checkbox.isChecked():
-            self.label.setText("Hold Down Button Enabled")
-            self.delay_spinbox.setEnabled(False)
-        else:
-            self.label.setText("Hold Down Button Disabled")
-            self.delay_spinbox.setEnabled(True)
-
     def npc_interact(self):
-        # Placeholder function for NPC interact button
-        keyboard_listener = keymash.KeyboardListener()
-        with Listener(on_press=keyboard_listener.on_press) as listener:
-            interact_button = self.character_input.text()
-            hold_down_button = self.hold_down_checkbox.isChecked()
-            button_press_delay = self.delay_spinbox.value() / 1000  # Convert to seconds
-            self.label.setText("NPC Interact Button Pressed")
-            macro_exit_code = keymash.npc_interact(keyboard_listener,interact_button, hold_down_button, button_press_delay)
+        # Get parameters from the GUI
+        interact_button = self.character_input.text()
+        button_press_delay = self.delay_spinbox.value() / 1000  # Convert ms to seconds
+        global_keyboard_listener.unchecked_stop_key()  # Reset the stop key state
+        self.label.setText("NPC Interact macro started...\nPress 'q' to stop")
+        
+        # Define a function to run your macro logic in a background thread
+        def run_macro():
+            # Use the global_keyboard_listener created at startup
+            macro_exit_code = kb_mash.npc_interact(global_keyboard_listener, interact_button, button_press_delay)
+            # Optionally, update the UI after macro ends using signals/slots if needed:
             if macro_exit_code == 2:
-                self.label.setText("User Interrupted: NPC Interact Button Released")
+                print("User Interrupted: NPC Interact Button Released")
             elif macro_exit_code == 1:
-                self.label.setText("User Interrupted: NPC Interact Button Loop Exited")
+                print("User Interrupted: NPC Interact Button Loop Exited")
             else:
-                self.label.setText("NPC Interact Button Loop Exited")
+                print("NPC Interact Button Loop Exited")
+        
+        # Start the macro in a new thread
+        threading.Thread(target=run_macro, daemon=True).start()
     
 
 class Tab2(QWidget):
