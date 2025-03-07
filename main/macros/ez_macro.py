@@ -1,7 +1,6 @@
 from pynput.keyboard import Key, Controller, Listener
 import random
 import time
-import math
 
 from utils.kbListener import KeyboardListener
 from utils.rand_pauser import random_pauser
