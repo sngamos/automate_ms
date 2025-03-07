@@ -20,7 +20,6 @@ class TutorialTab(QWidget):
 
         layout = QVBoxLayout()
         self.setLayout(layout)
-
         # Landing page text
         self.text_box = QTextEdit()
         self.text_box.setReadOnly(True)
@@ -40,20 +39,24 @@ class TutorialTab(QWidget):
                 <li>Auto Miracle cubing.</li>
                 <li>...More to come!<li>
             </ol>
+            </h3>Credits</h3>
+            <p>Developed by: <b>Openwide</b></p>
             
             """
         )
         layout.addWidget(self.text_box)
-
+        
         # Add button to open YouTube video
         self.video_button = QPushButton("Click here to watch video tutorial")
         self.video_button.clicked.connect(self.open_video_tutorial)
-        layout.addWidget(self.video_button, alignment=Qt.AlignCenter)
+        layout.addWidget(self.video_button, alignment=Qt.AlignmentFlag.AlignHCenter)
 
         # Checkbox for tutorial acknowledgment
         self.check_box = QCheckBox("I have read the tutorial")
         self.check_box.stateChanged.connect(self.enable_tabs)
-        layout.addWidget(self.check_box, alignment=Qt.AlignCenter)
+        layout.addWidget(self.check_box, alignment=Qt.AlignmentFlag.AlignHCenter)
+
+        
 
     def open_video_tutorial(self):
         youtube_url = QUrl("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
@@ -70,6 +73,8 @@ class TutorialTab(QWidget):
             self.main_window.disable_tabs()
         else:
             print(f"Unhandled state: {state}")
+
+    
 
 class Tab1(QWidget):
     def __init__(self):
@@ -123,8 +128,6 @@ class Tab1(QWidget):
         # Set the layout for the widget
         self.setLayout(layout)
 
-        # Set fixed width for the window when Tab1 is selected
-        self.setFixedWidth(300)
 
     def npc_interact(self):
         # Get parameters from the GUI
@@ -203,8 +206,15 @@ class MainWindow(QMainWindow):
         if index == 1:  # Tab1 selected
             self.setFixedWidth(300)
             self.setFixedHeight(300)
+        elif index ==0: # Tutorial Tab selected
+            self.setFixedWidth(800)
+            self.setFixedHeight(600)
+        elif index == 2:  # Tab2 selected
+            self.setFixedWidth(800)
+            self.setFixedHeight(800)
         else:
-            self.setFixedWidth(800)  # Default width    
+            self.setFixedWidth(800)
+            self.setFixedHeight(800)   
 
 # Run the application
 if __name__ == "__main__":
