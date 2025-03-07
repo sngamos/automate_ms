@@ -27,13 +27,13 @@ def blind_cubing_loop(kb_listener,mouse_controller,keyboard_controller):
             print("Stop key pressed, exiting loop.")
             break
         cubing_click(kb_listener,mouse_controller)
-        random_pauser(kb_listener,0.5,0.7)
+        random_pauser(kb_listener,0.2,0.5)
         keyboard_controller.press(Key.enter)
-        random_pauser(kb_listener,0.5,0.7)
+        random_pauser(kb_listener,0.2,0.5)
         keyboard_controller.release(Key.enter)
-        random_pauser(kb_listener,0.5,0.7)
+        random_pauser(kb_listener,0.2,0.5)
         keyboard_controller.press(Key.enter)
-        random_pauser(kb_listener,1.5,2)
+        random_pauser(kb_listener,1.5,1.7)
     return 1
 
 if __name__ == "__main__":
