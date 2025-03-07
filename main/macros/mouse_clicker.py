@@ -13,7 +13,8 @@ def cubing_click(kb_listener,mouse_controller, button= Button.left):
     mouse_controller.release(button)
     random_pauser(kb_listener,0.1,0.2)
 
-def blind_cubing_loop(kb_listener,mouse_controller,keyboard_controller):
+
+def test_blind_cubing_loop(kb_listener,mouse_controller,keyboard_controller):
     print("starting blind cubing loop")
     time.sleep(1)
     print("3")
@@ -30,17 +31,17 @@ def blind_cubing_loop(kb_listener,mouse_controller,keyboard_controller):
         random_pauser(kb_listener,0.2,0.3)
         #1
         keyboard_controller.press(Key.enter)
-        random_pauser(kb_listener,0.2,0.3)
+        random_pauser(kb_listener,0.1,0.2)
         keyboard_controller.release(Key.enter)
-        random_pauser(kb_listener,0.2,0.3)
+        random_pauser(kb_listener,0.1,0.2)
         #2
         keyboard_controller.press(Key.enter)
-        random_pauser(kb_listener,0.2,0.3)
+        random_pauser(kb_listener,0.1,0.2)
         keyboard_controller.release(Key.enter)
-        random_pauser(kb_listener,0.2,0.3)
+        random_pauser(kb_listener,0.1,0.2)
         #3
         keyboard_controller.press(Key.enter)
-        random_pauser(kb_listener,0.2,0.3)
+        random_pauser(kb_listener,0.1,0.2)
         keyboard_controller.release(Key.enter)
         #wait for next
         random_pauser(kb_listener,1.5,1.7)
@@ -55,4 +56,4 @@ if __name__ == "__main__":
     # Start the pynput Listener on the main thread
     global_listener = Listener(on_press=global_keyboard_listener.on_press)
     global_listener.start()  # This starts the listener non-blocking on the main thread
-    blind_cubing_loop(global_keyboard_listener,mouse_controller,keyboard_controller)
+    test_blind_cubing_loop(global_keyboard_listener,mouse_controller,keyboard_controller)
