@@ -15,6 +15,13 @@ def cubing_click(kb_listener,mouse_controller, button= Button.left):
 
 def blind_cubing_loop(kb_listener,mouse_controller,keyboard_controller):
     print("starting blind cubing loop")
+    time.sleep(1)
+    print("3")
+    time.sleep(1)
+    print("2")
+    time.sleep(1)
+    print("1")
+    time.sleep(1)
     while True:
         if kb_listener.check_stop_key():
             print("Stop key pressed, exiting loop.")
