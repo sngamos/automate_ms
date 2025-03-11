@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import (QApplication, QMainWindow, QTabWidget, QVBoxLayout, QHBoxLayout, QWidget, QLabel, QPushButton, QCheckBox, QTextEdit, QSpinBox, QLineEdit)
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QDesktopServices
-from PySide6.QtCore import QUrl
+from PySide6.QtGui import QDesktopServices, QPixmap, QColor
+from PySide6.QtCore import QUrl, Qt
+
 import macros.kb_mash as kb_mash
 from macros.utils.kbListener import KeyboardListener
 from pynput.keyboard import Listener
@@ -41,7 +41,7 @@ class TutorialTab(QWidget):
             </ol>
             </h3>Credits</h3>
             <p>Developed by: <b>Openwide</b></p>
-            
+
             """
         )
         layout.addWidget(self.text_box)
@@ -156,19 +156,42 @@ class Tab2(QWidget):
     def __init__(self):
         super().__init__()
         layout = QVBoxLayout()
+        
+        # 1. Image display area at the top
+        self.image_label = QLabel()
+        self.image_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        # Create a placeholder pixmap (400x300, gray background)
+        placeholder_pixmap = QPixmap(200, 150)
+        placeholder_pixmap.fill(QColor('gray'))
+        self.image_label.setPixmap(placeholder_pixmap)
+        layout.addWidget(self.image_label)
+        
+        # 2. "Set Capture Frame" button below the image
+        self.set_capture_frame_button = QPushButton("Set Capture Frame")
+        self.set_capture_frame_button.clicked.connect(self.set_capture_frame)
+        layout.addWidget(self.set_capture_frame_button, alignment=Qt.AlignHCenter)
+        
+        # 3. Existing UI elements
         self.label = QLabel("Auto: Miracle Cube")
         self.label.setAlignment(Qt.AlignCenter)
         layout.addWidget(self.label)
-
+        
         self.external_btn = QPushButton("Open Keypress Script")
         self.external_btn.clicked.connect(self.open_keypress_script)
         layout.addWidget(self.external_btn)
-
+        
         self.setLayout(layout)
+
+    def set_capture_frame(self):
+        # Placeholder function: in a real app, this would let the user snip a portion of the screen.
+        print("Set Capture Frame button clicked. Launch snipping tool placeholder.")
+        # Optionally update the image with a new placeholder to simulate a capture:
+        new_pixmap = QPixmap(400, 300)
+        new_pixmap.fill(QColor('lightblue'))  # Simulated new capture
+        self.image_label.setPixmap(new_pixmap)
 
     def open_keypress_script(self):
         self.label.setText("Call to Keypress script placeholder")
-
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
