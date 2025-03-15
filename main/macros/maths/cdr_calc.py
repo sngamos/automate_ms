@@ -26,4 +26,4 @@ def bite_cd_calc(hexa_bite_level, cdr_percent, cdr_potential):
     hexa_bite_cd = 15 - math.ceil(hexa_bite_level/6)
     return calculate_final_cd(hexa_bite_cd, cdr_percent, cdr_potential)
 
-print(bite_cd_calc(25,6,4))
+print(bite_cd_calc(25,5,4))
